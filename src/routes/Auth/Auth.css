@@ -1,0 +1,215 @@
+.auth-container {
+  position: relative;
+  height: 550px;
+  width: 850px;
+  overflow: hidden;
+  border-radius: 15px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.toggel-box .video-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+  opacity: 0;
+  animation: video-fade-in 1s ease-in-out forwards;
+}
+
+.toggel-box .video-bg.fade-out {
+  animation: video-fade-out 1s ease-in-out forwards;
+}
+
+@keyframes video-fade-in {
+  0% {
+    opacity: 0;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes video-fade-out {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.1);
+    filter: blur(10px);
+  }
+}
+
+/* Toggle Box Styling */
+.toggel-box {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.toggel-box::before {
+  content: '';
+  position: absolute;
+  left: -250%;
+  width: 300%;
+  height: 100%;
+  background: rgba(22, 22, 22, 0.5);
+  border-radius: 80px;
+  transition: 0.8s ease-in-out;
+  z-index: 1;
+}
+
+.active .toggel-box::before {
+  left: 50%;
+}
+
+/* Toggle Buttons */
+.tg {
+  z-index: 1;
+  transition: 0.6s ease-in-out;
+}
+
+/* Input Box Styling */
+.input-box {
+  width: calc(100% - 20px); /* Adjust width to include icon area */
+  height: 60px; /* Increased height */
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 0 45px 0 15px;
+  font-size: 16px;
+  color: #333;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.input-box:focus {
+  outline: none;
+  border-color: #7494ec;
+  box-shadow: 0 4px 8px rgba(116, 148, 236, 0.2);
+}
+
+.input-box::placeholder {
+  color: #aaa;
+}
+
+/* Icon Styling */
+.relative .fa-envelope, .relative .fa-lock, .relative .fa-user {
+  color: #888;
+  transition: color 0.3s ease;
+  position: absolute;
+  right: 15px; /* Adjust position to align with new input box width */
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.input-box:focus ~ .fa-envelope,
+.input-box:focus ~ .fa-lock,
+.input-box:focus ~ .fa-user {
+  color: #7494ec;
+}
+
+/* Buttons */
+button {
+  height: 48px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #7494ec, #5569c9);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+button:hover {
+  background: linear-gradient(90deg, #5569c9, #7494ec);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+a {
+  font-size: 14.5px;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: #5569c9;
+}
+
+
+@media screen and (max-width: 650px) {
+  .container {
+    height: calc(90vh - 50px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px;
+  }
+
+  .formbox {
+    width: 100%;
+    height: 70%;
+    bottom: 0;
+  }
+
+  .active .formbox {
+    right: 0;
+    bottom: 30%;
+  }
+
+  .toggel-box::before {
+    left: 0;
+    top: -270%;
+    width: 100%;
+    height: 300%;
+  }
+
+  .active .toggel-box::before {
+    left: 0;
+    top: 70%;
+  }
+
+  .tg {
+    width: 100%;
+    height: 30%;
+  }
+
+  .tg.Left {
+    top: 0;
+  }
+
+  .active .tg.Left {
+    left: 0;
+    top: -30%;
+  }
+
+  .tg.Right {
+    right: 0;
+    bottom: -30%;
+  }
+
+  .active .tg.Right {
+    bottom: 0;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .font-fit {
+    font-size: 25px;
+  }
+
+  .input-box {
+    font-size: 14px;
+  }
+}
