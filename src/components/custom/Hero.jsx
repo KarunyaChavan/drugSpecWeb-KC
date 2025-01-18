@@ -3,7 +3,7 @@ import videoBg from "../../assets/videoBg.mp4";
 import videoBg2 from "../../assets/videoBg2.mp4";
 import videoBg3 from "../../assets/videoBg3.mp4";
 
-function Hero() {
+function Hero({ setHeaderFading }) {
   const facts = [
     "'Calcium in milk can bind to certain antibiotics, like tetracyclines, reducing their effectiveness. Avoid taking these medications with dairy products for better absorption.'",
     "'Grapefruit and its juice can interfere with enzymes that metabolize medications. This can lead to higher or lower drug levels in your body, affecting their efficacy.'",
@@ -34,9 +34,11 @@ function Hero() {
 
   const handleVideoEnd = () => {
     setIsVideoFading(true);
+    setHeaderFading(true); // Notify the Header to fade out
     setTimeout(() => {
       setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % videos.length);
       setIsVideoFading(false);
+      setHeaderFading(false); // Notify the Header to fade back in
     }, 1000);
   };
 
