@@ -1,9 +1,16 @@
 import { useState, useEffect } from "react";
-import './Auth.css';
+import { motion } from "framer-motion";
+import "./Auth.css";
 import { FaUser, FaLock, FaEnvelope } from "react-icons/fa";
 import videoBg1 from "../../assets/videoBg.mp4";
 import videoBg2 from "../../assets/videoBg2.mp4";
 import videoBg3 from "../../assets/videoBg3.mp4";
+
+const pageVariants = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+};
 
 function AuthLayout() {
   const videos = [videoBg1, videoBg2, videoBg3];
@@ -24,7 +31,14 @@ function AuthLayout() {
   }, [videos.length]);
 
   return (
-    <div className="flex justify-center items-center min-h-screen w-full bg-gradient-to-r from-[#e2e2e2] to-[#c9d6ff]">
+    <motion.div
+      className="flex justify-center items-center min-h-screen w-full bg-gradient-to-r from-[#e2e2e2] to-[#c9d6ff]"
+      variants={pageVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      transition={{ duration: 0.8 }}
+    >
       <div
         className={`auth-container relative bg-white rounded-[30px] shadow-lg overflow-hidden ${
           isActive ? "active" : ""
@@ -131,7 +145,7 @@ function AuthLayout() {
           </form>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
