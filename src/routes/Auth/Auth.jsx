@@ -1,10 +1,14 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import "./Auth.css";
 import { FaUser, FaLock, FaEnvelope } from "react-icons/fa";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import videoBg1 from "../../assets/videoBg.mp4";
 import videoBg2 from "../../assets/videoBg2.mp4";
 import videoBg3 from "../../assets/videoBg3.mp4";
+import supabase from "../../Supabse/supabse";
+import QualificationModal from "../../components/Qualification";
 
 const pageVariants = {
   initial: { opacity: 0 },
@@ -17,6 +21,13 @@ function AuthLayout() {
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const [isVideoFading, setIsVideoFading] = useState(false);
   const [isActive, setIsActive] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [qualifications, setQualifications] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const videoInterval = setInterval(() => {
@@ -29,6 +40,47 @@ function AuthLayout() {
 
     return () => clearInterval(videoInterval);
   }, [videos.length]);
+
+  const handleAddQualification = (qualification) => {
+    setQualifications(qualification);
+  };
+
+  const handleLogin = async () => {
+    setLoading(true);
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      alert(`Login Error: ${error.message}`);
+    } else {
+      alert("Login successful!");
+      navigate("/profile");
+    }
+    setLoading(false);
+  };
+
+  const handleRegister = async () => {
+    if (isActive && (!qualifications || !qualifications.degree)) {
+      alert("Please provide your qualification details.");
+      return;
+    }
+    setLoading(true);
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: fullName,
+          role: isActive ? "hcp" : "patient",
+          qualification: isActive ? qualifications : null,
+        },
+      },
+    });
+    if (error) {
+      alert(`Registration Error: ${error.message}`);
+    } else {
+      alert("Registration successful! Please verify your email.");
+    }
+    setLoading(false);
+  };
 
   return (
     <motion.div
@@ -93,24 +145,43 @@ function AuthLayout() {
             isActive ? "translate-x-full opacity-0 invisible" : "translate-x-0 opacity-100 visible"
           }`}
         >
-          <form className="w-full">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleLogin();
+            }}
+            className="w-full"
+          >
             <h1 className="text-[36px] font-bold font-fit">Login</h1>
             <div className="relative my-[20px] form-control">
-              <input type="text" placeholder="Email" className="input-box" />
+              <input
+                type="text"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="input-box"
+              />
               <FaEnvelope className="absolute top-1/2 right-4 transform -translate-y-1/2" />
             </div>
             <div className="relative my-[20px] form-control">
-              <input type="password" placeholder="Password" className="input-box" />
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="input-box"
+              />
               <FaLock className="absolute top-1/2 right-4 transform -translate-y-1/2" />
             </div>
-            <a href="#" className="text-[14.5px] text-[#333] no-underline">
-              Forgot Password?
-            </a>
             <button
               type="submit"
-              className="w-full h-[48px] bg-[#7494ec] rounded-lg shadow-lg border-none cursor-pointer text-[16px] text-[#fff] font-semibold"
+              className="w-full h-[48px] bg-[#7494ec] rounded-lg shadow-lg border-none cursor-pointer text-[16px] text-[#fff] font-semibold flex items-center justify-center"
             >
-              Login
+              {loading ? (
+                <AiOutlineLoading3Quarters className="animate-spin h-5 w-5" />
+              ) : (
+                "Login"
+              )}
             </button>
           </form>
         </div>
@@ -122,28 +193,75 @@ function AuthLayout() {
             isActive ? "translate-x-0 opacity-100 visible " : "-translate-x-full opacity-0 invisible"
           }`}
         >
-          <form className="w-full">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleRegister();
+            }}
+            className="w-full"
+          >
             <h1 className="text-[36px] font-bold font-fit md:pt-12">Register</h1>
             <div className="relative my-[20px] form-control">
-              <input type="text" placeholder="Full Name" className="input-box" />
+              <input
+                type="text"
+                placeholder="Full Name"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                className="input-box"
+              />
               <FaUser className="absolute top-1/2 right-4 transform -translate-y-1/2" />
             </div>
             <div className="relative my-[20px] form-control">
-              <input type="text" placeholder="Email" className="input-box" />
+              <input
+                type="text"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="input-box"
+              />
               <FaEnvelope className="absolute top-1/2 right-4 transform -translate-y-1/2" />
             </div>
             <div className="relative my-[20px] form-control">
-              <input type="password" placeholder="Password" className="input-box" />
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="input-box"
+              />
               <FaLock className="absolute top-1/2 right-4 transform -translate-y-1/2" />
             </div>
+            <div
+              onClick={() => setIsModalOpen(true)}
+              className="rounded-lg bg-white shadow-lg border border-[#7494ec] cursor-pointer text-[16px] text-[#7494ec] h-[40px] w-2/3 mb-4 flex items-center justify-center self-center mx-auto hover:text-white hover:bg-[#7494ec]"
+            >
+              {qualifications ? "Edit Qualifications" : "Add Qualifications"}
+            </div>
+            {qualifications && (
+              <ul className="list-disc list-inside justify-center flex flex-col text-left">
+                <li>Degree: {qualifications.degree}</li>
+                <li>Department: {qualifications.department}</li>
+                <li>Institution: {qualifications.institution}</li>
+              </ul>
+            )}
             <button
               type="submit"
-              className="w-full h-[48px] bg-[#7494ec] rounded-lg shadow-lg border-none cursor-pointer text-[16px] text-[#fff] font-semibold"
+              disabled={loading}
+              className="w-full h-[48px] bg-[#7494ec] rounded-lg shadow-lg border-none cursor-pointer text-[16px] text-[#fff] font-semibold flex items-center justify-center"
             >
-              Register
+              {loading ? (
+                <AiOutlineLoading3Quarters className="animate-spin h-5 w-5" />
+              ) : (
+                "Register"
+              )}
             </button>
           </form>
         </div>
+        <QualificationModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSave={handleAddQualification}
+        />
       </div>
     </motion.div>
   );
